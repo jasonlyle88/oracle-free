@@ -1,0 +1,16 @@
+.env
+
+container-data/db/*.zip
+container-data/db/*.tar.gz
+
+container-data/db/apex/*
+
+container-data/db/apex-install/*
+
+container-data/db/jdk/*
+
+container-data/db/oradata/*
+
+container-data/db/sqlcl/*
+
+!.gitkeep
