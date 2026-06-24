@@ -25,9 +25,19 @@ services:
       - ./container-data/db/apex:/apex:U,ro # fetch with scripts/prepare-apex.sh
       - ./container-data/db/oradata:/opt/oracle/oradata:U # persistent database storage
       - ./container-scripts/db/entrypoint.sh:/entrypoint.sh:U,ro # Custom entrypoint
+      - ./container-scripts/db/healthcheck:/healthcheck:U,ro # Healthcheck script
       - ./container-scripts/db/setup:/opt/oracle/scripts/setup:U,ro # Setup scripts
       - ./container-scripts/db/startup:/opt/oracle/scripts/startup:U,ro # Startup scripts
       - ./container-data/db/apex-install:/apex-install:U # APEX installation log files
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "/healthcheck/check.sh >/dev/null || exit 1"
+        ]
+      start_period: 900s
+      interval: 60s
+      timeout: 30s
 
   # ords:
   #   image: container-registry.oracle.com/database/ords:latest
