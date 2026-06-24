@@ -10,9 +10,9 @@ mkdir -p "${ROOT}/container-data/db/apex-install"
 mkdir -p "${ROOT}/container-data/db/oradata"
 mkdir -p "${ROOT}/container-data/ords"
 
-find "${ROOT}/container-data/db/apex-install" -mindepth 1 -delete
-find "${ROOT}/container-data/db/oradata" -mindepth 1 -delete
-find "${ROOT}/container-data/ords" -mindepth 1 -delete
+find "${ROOT}/container-data/db/apex-install" -mindepth 1 ! -name '.gitkeep' -delete
+find "${ROOT}/container-data/db/oradata" -mindepth 1 ! -name '.gitkeep' -delete
+find "${ROOT}/container-data/ords" -mindepth 1 ! -name '.gitkeep' -delete
 
 printf -- 'Container environment reset complete.\n'
 printf -- 'To get the latest version of Java, re-run "prepare-java.sh".\n'
