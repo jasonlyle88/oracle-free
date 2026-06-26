@@ -1,0 +1,47 @@
+name: ${COMPOSE_PROJECT_NAME:-apex-stack}
+
+services:
+  db:
+    image: container-registry.oracle.com/database/free:latest
+    container_name: ${COMPOSE_PROJECT_NAME:-apex-stack}-db
+    environment:
+      ORACLE_CHARACTERSET: ${ORACLE_CHARACTERSET:-AL32UTF8}
+      ORACLE_PDB: ${ORACLE_PDB:-FREEPDB1}
+      ORACLE_PWD: ${ORACLE_PWD:?Set ORACLE_PWD in .env}
+      ENABLE_ARCHIVELOG: ${ENABLE_ARCHIVELOG:-true}
+      ENABLE_FORCE_LOGGING: ${ENABLE_FORCE_LOGGING:-true}
+    ports:
+      - ${HOST_DB_PORT:-1521}:1521
+    volumes:
+      - db-files:/opt/oracle/oradata # persistent database storage
+      - ./container-scripts/db/setup:/opt/oracle/scripts/setup:ro # Setup scripts
+      - ./container-scripts/db/startup:/opt/oracle/scripts/startup:ro # Startup scripts
+
+  ords:
+    image: container-registry.oracle.com/database/ords:latest
+    container_name: ${COMPOSE_PROJECT_NAME:-apex-stack}-ords
+    pids_limit: ${ORDS_PIDS_LIMIT:-4096}
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DBHOST: db
+      DBPORT: 1521
+      DBSERVICENAME: ${ORACLE_PDB:-FREEPDB1}
+      ORACLE_PWD: ${ORACLE_PWD:?Set ORACLE_PWD in .env}
+      FORECE_SECURE: ${ORDS_FORCE_SECURE:-false}
+      APEX_PWD: ${APEX_PUBLIC_USER_PWD:?Set APEX_PUBLIC_USER_PWD in .env}
+      APEX_ADMIN_PWD: ${APEX_ADMIN_PWD:?Set APEX_ADMIN_PWD in .env}
+      DEBUG: ${ORDS_DEBUG:-false}
+      JDK_JAVA_OPTIONS: ${ORDS_JDK_JAVA_OPTIONS:-"-Xms512M -Xmx1024M"}
+    ports:
+      - ${HOST_ORDS_HTTP_PORT:-8181}:8080
+      - ${HOST_ORDS_HTTPS_PORT:-8443}:8443
+    volumes:
+      - ords-config:/etc/ords/config # persistent ORDS storage
+      - ./container-data/ords/apex:/opt/oracle/apex:ro # APEX image files
+      - ./container-data/ords/ssl:/etc/ords/config/ssl:ro # ORDS SSL certificates
+      - ./container-scripts/ords/startup:/ords-entrypoint.d:ro # ORDS Startup scripts
+volumes:
+  db-files:
+  ords-config:

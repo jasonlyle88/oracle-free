@@ -1,0 +1,7 @@
+.env
+
+container-data/ords/apex-latest.zip
+container-data/ords/apex/*
+container-data/ords/ssl/*
+
+!.gitkeep
