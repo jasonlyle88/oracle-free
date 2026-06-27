@@ -23,33 +23,31 @@ If you have questions about how to create your own certificates, please see this
 
 ## Useful information
 
-You can connect to the database from either container:
+You can connect to the database from either container.
 
-<!-- TODO: Verify these commands -->
 Database container:
 ```sh
-# connect to CDB
+# connect to CDB as SYS
 sqlplus / as sysdba
 
-# connect to PDB
-sqlplus /@"${ORACLE_PDB}"
+# connect to PDB as SYS
+sqlplus sys/"${ORACLE_PWD}"@"${ORACLE_PDB}" as sysdba
 ```
 
-<!-- TODO: Verify these commands -->
 ORDS container:
 ```sh
-# connect to CDB
+# connect to CDB as SYS
 sql sys/"${ORACLE_PWD}"@"${DBHOST}":"${DBPORT}" as sysdba
 
-# connect to PDB
+# connect to PDB as SYS
 sql sys/"${ORACLE_PWD}"@"${DBHOST}":"${DBPORT}"/"${DBSERVICENAME}" as sysdba
 ```
 
 ## To-do Items
 
-- [ ] Check parity of `.env.example` and `.env`
+- [x] Check parity of `.env.example` and `.env`
 - [ ] Add healthcheck for ORDS container: ORDS healthcheck
 - [ ] Add healthcheck for ORDS container: APEX healtcheck
-- [ ] Test full runs
+- [x] Test full runs
 - [ ] Refactor/remove `scripts/reset.sh` once in git repo. Just be podman volume management? Leave this to be manually manged by users? Not sure...
 - [ ] Remove `container-scripts/ords/startup/050-reset-apex-admin-password.sh` once image fixes bug where admin user doesn't get created on APEX install

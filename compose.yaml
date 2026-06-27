@@ -42,6 +42,13 @@ services:
       - ./container-data/ords/apex:/opt/oracle/apex:ro # APEX image files
       - ./container-data/ords/ssl:/etc/ords/config/ssl:ro # ORDS SSL certificates
       - ./container-scripts/ords/startup:/ords-entrypoint.d:ro # ORDS Startup scripts
+      - ./container-scripts/ords/healthcheck:/healthcheck:ro # ORDS Healthcheck scripts
+    healthcheck:
+      test: ["CMD-SHELL", "bash /healthcheck/healthcheck.sh || exit 1"]
+      interval: 1m
+      timeout: 30s
+      retries: 3
+      start_period: 7m
 volumes:
   db-files:
   ords-config:
